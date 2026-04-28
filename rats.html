@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <title>RATS ULTIMATE 2026</title>
     <style>
         :root {
@@ -67,7 +67,8 @@
             font-size: 1.4rem;
             color: #fff;
         }
- .social-pop-bar {
+
+        .social-pop-bar {
             position: fixed;
             top: -100px; 
             left: 20px;
@@ -86,13 +87,12 @@
 
         .social-pop-bar.active { top: 0; }
 
-        /* زر الفتح */
         .toggle-btn {
             position: fixed;
             top: 0;
             left: 45px;
             background: #111;
-            color: #00ff00; /* Hacker Green */
+            color: #00ff00;
             width: 45px;
             height: 25px;
             border-radius: 0 0 12px 12px;
@@ -108,7 +108,6 @@
 
         .toggle-btn:hover { height: 32px; box-shadow: 0 0 10px #00ff0066; }
 
-        /* الأيقونات */
         .social-pop-bar a {
             color: #ffffff;
             font-size: 1.4rem;
@@ -122,8 +121,6 @@
             text-shadow: 0 0 8px #00ff00;
         }
 
-        .toggle-btn i { transition: transform 0.4s; }
-        .toggle-btn.open i { transform: rotate(180deg); }
         .content-block {
             background-color: var(--card-color-rgba);
             border: 1px solid var(--border);
@@ -189,7 +186,6 @@
         .btn-dl:hover { opacity: 0.8; transform: scale(1.05); }
         .btn-unsafe { background: var(--red); }
 
-        /* تنسيق أزرار التنقل */
         .pagination-container {
             display: flex;
             justify-content: center;
@@ -219,10 +215,7 @@
             cursor: not-allowed;
         }
 
-        #pageInfo {
-            font-family: monospace;
-            font-size: 1.1rem;
-        }
+        #pageInfo { font-family: monospace; font-size: 1.1rem; }
 
         .modal-overlay {
             position: fixed;
@@ -244,27 +237,26 @@
             width: 90%;
             text-align: center;
             box-shadow: 0 0 40px rgba(218, 54, 51, 0.4);
-            backdrop-filter: blur(20px);
         }
 
         footer { text-align: center; padding: 40px; opacity: 0.5; font-family: monospace; font-size: 1.1rem; }
     </style>
 </head>
 <body>
- <div class="toggle-btn" id="doorBtn">
-        <i class="fas fa-chevron-down"></i>
-    </div>
 
-    <div class="social-pop-bar" id="socialBar">
-        </div>
+<div class="toggle-btn" id="doorBtn">
+    <i class="fas fa-chevron-down"></i>
+</div>
+
+<div class="social-pop-bar" id="socialBar"></div>
 
 <div id="dangerModal" class="modal-overlay">
     <div class="modal-box">
         <h2 style="color:var(--red); margin-top:0;">⚠️ تحذير أمني خطير</h2>
         <p id="modalMessage" style="line-height: 1.6; margin: 20px 0;"></p>
         <div style="display: flex; justify-content: center; gap: 10px;">
-            <button id="confirmBtn" class="modal-btn" style="background: var(--red); padding: 10px 20px; border-radius: 5px; border: none; color: white; cursor: pointer;">استمرار</button>
-            <button id="cancelBtn" class="modal-btn" style="background: #30363d; padding: 10px 20px; border-radius: 5px; border: none; color: white; cursor: pointer;">إلغاء</button>
+            <button id="confirmBtn" style="background: var(--red); padding: 10px 20px; border-radius: 5px; border: none; color: white; cursor: pointer;">استمرار</button>
+            <button id="cancelBtn" style="background: #30363d; padding: 10px 20px; border-radius: 5px; border: none; color: white; cursor: pointer;">إلغاء</button>
         </div>
     </div>
 </div>
@@ -276,7 +268,7 @@
 
     <div class="stats-container">
         <div class="stat-card">
-            <span>إجمالي</span>
+            <span>إجمالي الأدوات</span>
             <b id="totalLinks">0</b>
         </div>
         <div class="stat-card">
@@ -313,61 +305,41 @@
 </div>
 
 <footer>&copy; 2026 | Made by baylak</footer>
- <script>
-        const socialBar = document.getElementById('socialBar');
-        const btn = document.getElementById('doorBtn');
 
-        // دالة لقراءة الملف وتحليله
-        async function loadSocialLinks() {
-            try {
-                // قراءة الملف - تأكد أن الملف في نفس المجلد باسم mysocial.txt
-                const response = await fetch('mysocial.txt');
-                if (!response.ok) throw new Error('لم يتم العثور على ملف mysocial.txt');
-                
-                const data = await response.text();
-                const lines = data.trim().split('\n');
-
-                lines.forEach(line => {
-                    if (line.includes('=')) {
-                        const [platform, url] = line.split('=').map(item => item.trim());
-                        
-                        const anchor = document.createElement('a');
-                        anchor.href = url.startsWith('http') ? url : `https://${url}`;
-                        anchor.target = "_blank";
-                        anchor.title = platform;
-                        
-                        const icon = document.createElement('i');
-                        // محرك ذكي لاختيار الأيقونة
-                        icon.className = `fab fa-${platform.toLowerCase()}`;
-                        
-                        // تعديلات خاصة لبعض المنصات
-                        if(platform.toLowerCase() === 'x') icon.className = 'fab fa-x-twitter';
-                        
-                        anchor.appendChild(icon);
-                        socialBar.appendChild(anchor);
-                    }
-                });
-            } catch (error) {
-                console.error('Error:', error);
-                socialBar.innerHTML = '<span style="color:red; font-size:12px;">خطأ في تحميل الروابط</span>';
-            }
-        }
-
-        // تشغيل التحميل عند فتح الصفحة
-        loadSocialLinks();
-
-        // منطق الحركة
-        btn.addEventListener('click', () => {
-            socialBar.classList.toggle('active');
-            btn.classList.toggle('open');
-            if(socialBar.classList.contains('active')) {
-                btn.style.top = socialBar.offsetHeight + "px";
-            } else {
-                btn.style.top = "0";
-            }
-        });
-    </script>
 <script>
+    // --- منطق الروابط الاجتماعية ---
+    const socialBar = document.getElementById('socialBar');
+    const btn = document.getElementById('doorBtn');
+
+    async function loadSocialLinks() {
+        try {
+            const response = await fetch('mysocial.txt');
+            if (!response.ok) throw new Error('Error');
+            const data = await response.text();
+            data.trim().split('\n').forEach(line => {
+                if (line.includes('=')) {
+                    const [platform, url] = line.split('=').map(item => item.trim());
+                    const anchor = document.createElement('a');
+                    anchor.href = url.startsWith('http') ? url : `https://${url}`;
+                    anchor.target = "_blank";
+                    const icon = document.createElement('i');
+                    icon.className = `fab fa-${platform.toLowerCase()}`;
+                    if(platform.toLowerCase() === 'x') icon.className = 'fab fa-x-twitter';
+                    anchor.appendChild(icon);
+                    socialBar.appendChild(anchor);
+                }
+            });
+        } catch (e) { socialBar.innerHTML = ''; }
+    }
+    loadSocialLinks();
+
+    btn.addEventListener('click', () => {
+        socialBar.classList.toggle('active');
+        btn.classList.toggle('open');
+        btn.style.top = socialBar.classList.contains('active') ? socialBar.offsetHeight + "px" : "0";
+    });
+
+    // --- منطق الأدوات والبحث ---
     let allTools = [];
     let filteredTools = [];
     let currentPage = 1;
@@ -376,9 +348,6 @@
 
     const modal = document.getElementById('dangerModal');
     const modalMessage = document.getElementById('modalMessage');
-    const confirmBtn = document.getElementById('confirmBtn');
-    const cancelBtn = document.getElementById('cancelBtn');
-    
     const totalCountEl = document.getElementById('totalLinks');
     const filteredCountEl = document.getElementById('filteredLinks');
     const tbody = document.getElementById('tableBody');
@@ -389,15 +358,13 @@
     function handleAction(name, url, status) {
         if (status === 'unsafe') {
             pendingUrl = url;
-            modalMessage.innerHTML = `الأداة <b>${name}</b> مصنفة كملف <b>خطر</b>.<br>هل أنت متأكد من رغبتك في التحميل؟`;
+            modalMessage.innerHTML = `الأداة <b>${name}</b> مصنفة كملف <b>خطر</b>.<br>هل أنت متأكد؟`;
             modal.style.display = 'flex';
-        } else {
-            window.open(url, '_blank');
-        }
+        } else { window.open(url, '_blank'); }
     }
 
-    confirmBtn.onclick = () => { window.open(pendingUrl, '_blank'); modal.style.display = 'none'; };
-    cancelBtn.onclick = () => modal.style.display = 'none';
+    document.getElementById('confirmBtn').onclick = () => { window.open(pendingUrl, '_blank'); modal.style.display = 'none'; };
+    document.getElementById('cancelBtn').onclick = () => modal.style.display = 'none';
 
     async function loadTools() {
         try {
@@ -418,31 +385,23 @@
             });
 
             filteredTools = [...allTools];
-            totalCountEl.innerText = allTools.length;
+            totalCountEl.innerText = allTools.length; // الإجمالي ثابت
+            filteredCountEl.innerText = "0"; // يبدأ بصفر حتى يبحث المستخدم
             updateDisplay();
-        } catch (e) {
-            console.error("فشل تحميل البيانات.");
-        }
+        } catch (e) { console.error("Data Load Failed"); }
     }
 
     function updateDisplay() {
         const totalPages = Math.ceil(filteredTools.length / itemsPerPage) || 1;
-        
-        // التأكد من أن الصفحة الحالية لا تتخطى الحدود
         if (currentPage > totalPages) currentPage = totalPages;
         if (currentPage < 1) currentPage = 1;
 
-        // حساب العناصر المراد عرضها
         const start = (currentPage - 1) * itemsPerPage;
         const end = start + itemsPerPage;
         const paginatedItems = filteredTools.slice(start, end);
 
         renderTable(paginatedItems);
-
-        // تحديث معلومات الصفحة والأزرار
         pageInfo.innerText = `صفحة ${currentPage} من ${totalPages}`;
-        filteredCountEl.innerText = filteredTools.length;
-        
         prevBtn.disabled = currentPage === 1;
         nextBtn.disabled = currentPage === totalPages;
     }
@@ -452,7 +411,6 @@
         data.forEach(t => {
             const badgeClass = t.status === 'safe' ? 'badge-safe' : (t.status === 'unsafe' ? 'badge-danger' : 'badge-unknown');
             const badgeText = t.status === 'safe' ? 'آمن ✅' : (t.status === 'unsafe' ? 'خطر ❌' : 'غير مفحوص 🔍');
-
             tbody.innerHTML += `
                 <tr>
                     <td><strong>${t.name}</strong></td>
@@ -464,34 +422,23 @@
         });
     }
 
-    // أحداث أزرار التنقل
-    prevBtn.onclick = () => {
-        if (currentPage > 1) {
-            currentPage--;
-            updateDisplay();
-            window.scrollTo(0, 0);
-        }
-    };
-
-    nextBtn.onclick = () => {
-        const totalPages = Math.ceil(filteredTools.length / itemsPerPage);
-        if (currentPage < totalPages) {
-            currentPage++;
-            updateDisplay();
-            window.scrollTo(0, 0);
-        }
-    };
-
-    // البحث
+    // البحث - هنا التعديل الجوهري
     document.getElementById('toolSearch').oninput = (e) => {
-        const query = e.target.value.toLowerCase();
+        const query = e.target.value.trim().toLowerCase();
+        
         filteredTools = allTools.filter(t => t.name.toLowerCase().includes(query));
-        currentPage = 1; // العودة للصفحة الأولى عند البحث
+        
+        // تحديث عداد النتائج: إذا كان البحث فارغاً يعود لـ 0، وإذا وجد نتائج يظهر عددها
+        filteredCountEl.innerText = query === "" ? "0" : filteredTools.length;
+        
+        currentPage = 1;
         updateDisplay();
     };
 
+    prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; updateDisplay(); window.scrollTo(0, 0); } };
+    nextBtn.onclick = () => { if (currentPage < Math.ceil(filteredTools.length / itemsPerPage)) { currentPage++; updateDisplay(); window.scrollTo(0, 0); } };
+
     loadTools();
 </script>
-
 </body>
 </html>
