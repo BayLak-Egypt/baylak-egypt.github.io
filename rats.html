@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>RATS ULTIMATE 2026</title>
+    <style>
+        :root {
+            --bg-color-rgba: rgba(13, 17, 23, 0.6);
+            --card-color-rgba: rgba(22, 27, 34, 0.45);
+            --green: #238636;
+            --red: #da3633;
+            --yellow: #e3b341;
+            --text: #c9d1d9;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            background-image: url('background-rat.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-color: var(--bg-color-rgba);
+            background-blend-mode: darken;
+        }
+
+        .container { 
+            max-width: 1000px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            width: 100%; 
+            box-sizing: border-box; 
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        .stat-card {
+            background: var(--card-color-rgba);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 12px;
+            flex: 1;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .stat-card span {
+            display: block;
+            font-size: 0.8rem;
+            color: #8b949e;
+            margin-bottom: 5px;
+        }
+
+        .stat-card b {
+            font-size: 1.4rem;
+            color: #fff;
+        }
+
+        .social-pop-bar {
+            position: fixed;
+            top: -100px; 
+            left: 20px;
+            background: #111;
+            padding: 12px 20px;
+            border-radius: 0 0 15px 15px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            box-shadow: 0 5px 25px rgba(0, 255, 0, 0.2);
+            z-index: 10000;
+            border: 1px solid #00ff0033;
+            border-top: none;
+        }
+
+        .social-pop-bar.active { top: 0; }
+
+        .toggle-btn {
+            position: fixed;
+            top: 0;
+            left: 45px;
+            background: #111;
+            color: #00ff00;
+            width: 45px;
+            height: 25px;
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10001;
+            transition: 0.3s;
+            border: 1px solid #00ff0033;
+            border-top: none;
+        }
+
+        .toggle-btn:hover { height: 32px; box-shadow: 0 0 10px #00ff0066; }
+
+        .social-pop-bar a {
+            color: #ffffff;
+            font-size: 1.4rem;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .social-pop-bar a:hover { 
+            transform: scale(1.3); 
+            color: #00ff00; 
+            text-shadow: 0 0 8px #00ff00;
+        }
+
+        .content-block {
+            background-color: var(--card-color-rgba);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 25px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.7);
+        }
+
+        .rainbow-text {
+            font-size: 3.5rem;
+            margin-bottom: 5px;
+            font-weight: 800;
+            text-align: center;
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 400% 400%;
+            animation: rainbow_animation 5s ease infinite;
+        }
+
+        @keyframes rainbow_animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .disclaimer-bar {
+            background-color: rgba(218, 54, 51, 0.15);
+            border: 1px solid var(--red);
+            color: #ff7b72;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            margin-bottom: 20px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        table { width: 100%; border-collapse: collapse; background: rgba(0, 0, 0, 0.1); border-radius: 8px; overflow: hidden; }
+        th, td { padding: 15px; text-align: right; border-bottom: 1px solid var(--border); }
+        th { background: rgba(0, 0, 0, 0.5); color: var(--green); }
+
+        .badge { padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.2); }
+        .badge-safe { color: #3fb950; border: 1px solid #3fb950; }
+        .badge-danger { color: var(--red); border: 1px solid var(--red); }
+        .badge-unknown { color: var(--yellow); border: 1px solid var(--yellow); }
+
+        .btn-dl { padding: 8px 20px; background: var(--green); color: white; border-radius: 6px; cursor: pointer; border: none; font-weight: bold; transition: 0.3s; }
+        .btn-dl:hover { opacity: 0.8; transform: scale(1.05); }
+        .btn-unsafe { background: var(--red); }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .btn-nav {
+            padding: 10px 25px;
+            background: var(--card-color-rgba);
+            border: 1px solid var(--border);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        #pageInfo { font-family: monospace; font-size: 1.1rem; }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-box {
+            background: rgba(22, 27, 34, 0.85);
+            border: 2px solid var(--red);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(218, 54, 51, 0.4);
+        }
+
+        footer { text-align: center; padding: 40px; opacity: 0.5; font-family: monospace; font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+<div class="toggle-btn" id="doorBtn">
+    <i class="fas fa-chevron-down"></i>
+</div>
+
+<div class="social-pop-bar" id="socialBar"></div>
+
+<div id="dangerModal" class="modal-overlay">
+    <div class="modal-box">
+        <h2 style="color:var(--red); margin-top:0;">⚠️ تحذير أمني خطير</h2>
+        <p id="modalMessage" style="line-height: 1.6; margin: 20px 0;"></p>
+        <div style="display: flex; justify-content: center; gap: 10px;">
+            <button id="confirmBtn" style="background: var(--red); padding: 10px 20px; border-radius: 5px; border: none; color: white; cursor: pointer;">استمرار</button>
+            <button id="cancelBtn" style="background: #30363d; padding: 10px 20px; border-radius: 5px; border: none; color: white; cursor: pointer;">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <header>
+        <h1 class="rainbow-text">RATS WEB</h1>
+    </header>
+
+    <div class="stats-container">
+        <div class="stat-card">
+            <span>إجمالي الأدوات</span>
+            <b id="totalLinks">0</b>
+        </div>
+        <div class="stat-card">
+            <span>نتائج البحث</span>
+            <b id="filteredLinks">0</b>
+        </div>
+    </div>
+
+    <div class="content-block">
+        <div class="disclaimer-bar">
+⚠️ تنبيه هام: نحن غير مسؤولين عن إساءة استخدام هذه البرامج، ولا نتحمل أي مسؤولية في حال تم اختراقك أو تضرر جهازك نتيجة استخدام أحد هذه الملفات. استخدمها على مسؤوليتك الشخصية وفي بيئة معزولة (Sandbox/VM).
+
+        </div>
+
+        <input type="text" id="toolSearch" class="search-input" placeholder="ابحث عن أداة معينة...">
+
+        <table>
+            <thead>
+                <tr>
+                    <th>اسم الأداة</th>
+                    <th>الحالة الأمنية</th>
+                    <th style="text-align: left;">التحميل</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+
+        <div class="pagination-container">
+            <button id="prevBtn" class="btn-nav">السابق</button>
+            <span id="pageInfo">صفحة 1 من 1</span>
+            <button id="nextBtn" class="btn-nav">التالي</button>
+        </div>
+    </div>
+</div>
+
+<footer>&copy; 2026 | Made by baylak</footer>
+
+<script>
+    // --- منطق الروابط الاجتماعية ---
+    const socialBar = document.getElementById('socialBar');
+    const btn = document.getElementById('doorBtn');
+
+    async function loadSocialLinks() {
+        try {
+            const response = await fetch('mysocial.txt');
+            if (!response.ok) throw new Error('Error');
+            const data = await response.text();
+            data.trim().split('\n').forEach(line => {
+                if (line.includes('=')) {
+                    const [platform, url] = line.split('=').map(item => item.trim());
+                    const anchor = document.createElement('a');
+                    anchor.href = url.startsWith('http') ? url : `https://${url}`;
+                    anchor.target = "_blank";
+                    const icon = document.createElement('i');
+                    icon.className = `fab fa-${platform.toLowerCase()}`;
+                    if(platform.toLowerCase() === 'x') icon.className = 'fab fa-x-twitter';
+                    anchor.appendChild(icon);
+                    socialBar.appendChild(anchor);
+                }
+            });
+        } catch (e) { socialBar.innerHTML = ''; }
+    }
+    loadSocialLinks();
+
+    btn.addEventListener('click', () => {
+        socialBar.classList.toggle('active');
+        btn.classList.toggle('open');
+        btn.style.top = socialBar.classList.contains('active') ? socialBar.offsetHeight + "px" : "0";
+    });
+
+    // --- منطق الأدوات والبحث ---
+    let allTools = [];
+    let filteredTools = [];
+    let currentPage = 1;
+    const itemsPerPage = 15;
+    let pendingUrl = "";
+
+    const modal = document.getElementById('dangerModal');
+    const modalMessage = document.getElementById('modalMessage');
+    const totalCountEl = document.getElementById('totalLinks');
+    const filteredCountEl = document.getElementById('filteredLinks');
+    const tbody = document.getElementById('tableBody');
+    const pageInfo = document.getElementById('pageInfo');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    function handleAction(name, url, status) {
+        if (status === 'unsafe') {
+            pendingUrl = url;
+            modalMessage.innerHTML = `الأداة <b>${name}</b> مصنفة كملف <b>خطر</b>.<br>هل أنت متأكد؟`;
+            modal.style.display = 'flex';
+        } else { window.open(url, '_blank'); }
+    }
+
+    document.getElementById('confirmBtn').onclick = () => { window.open(pendingUrl, '_blank'); modal.style.display = 'none'; };
+    document.getElementById('cancelBtn').onclick = () => modal.style.display = 'none';
+
+    async function loadTools() {
+        try {
+            const response = await fetch('tools/ratsurl.txt');
+            const text = await response.text();
+            allTools = text.trim().split('\n').filter(l => l.trim()).map(line => {
+                const [name, url, status] = line.split(';');
+                return { 
+                    name: name?.trim(), 
+                    url: url?.trim(), 
+                    status: status?.trim().toLowerCase() || 'unknown' 
+                };
+            });
+            
+            allTools.sort((a, b) => {
+                const w = { 'safe': 1, 'unknown': 2, 'unsafe': 3 };
+                return w[a.status] - w[b.status];
+            });
+
+            filteredTools = [...allTools];
+            totalCountEl.innerText = allTools.length; // الإجمالي ثابت
+            filteredCountEl.innerText = "0"; // يبدأ بصفر حتى يبحث المستخدم
+            updateDisplay();
+        } catch (e) { console.error("Data Load Failed"); }
+    }
+
+    function updateDisplay() {
+        const totalPages = Math.ceil(filteredTools.length / itemsPerPage) || 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedItems = filteredTools.slice(start, end);
+
+        renderTable(paginatedItems);
+        pageInfo.innerText = `صفحة ${currentPage} من ${totalPages}`;
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+    }
+
+    function renderTable(data) {
+        tbody.innerHTML = '';
+        data.forEach(t => {
+            const badgeClass = t.status === 'safe' ? 'badge-safe' : (t.status === 'unsafe' ? 'badge-danger' : 'badge-unknown');
+            const badgeText = t.status === 'safe' ? 'آمن ✅' : (t.status === 'unsafe' ? 'خطر ❌' : 'غير مفحوص 🔍');
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${t.name}</strong></td>
+                    <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+                    <td style="text-align: left;">
+                        <button onclick="handleAction('${t.name}', '${t.url}', '${t.status}')" class="btn-dl ${t.status === 'unsafe' ? 'btn-unsafe' : ''}">تحميل</button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    // البحث - هنا التعديل الجوهري
+    document.getElementById('toolSearch').oninput = (e) => {
+        const query = e.target.value.trim().toLowerCase();
+        
+        filteredTools = allTools.filter(t => t.name.toLowerCase().includes(query));
+        
+        // تحديث عداد النتائج: إذا كان البحث فارغاً يعود لـ 0، وإذا وجد نتائج يظهر عددها
+        filteredCountEl.innerText = query === "" ? "0" : filteredTools.length;
+        
+        currentPage = 1;
+        updateDisplay();
+    };
+
+    prevBtn.onclick = () => { if (currentPage > 1) { currentPage--; updateDisplay(); window.scrollTo(0, 0); } };
+    nextBtn.onclick = () => { if (currentPage < Math.ceil(filteredTools.length / itemsPerPage)) { currentPage++; updateDisplay(); window.scrollTo(0, 0); } };
+
+    loadTools();
+</script>
+</body>
+</html>
