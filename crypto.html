@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Donate - BayLak</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* إعدادات عامة */html {
+    scroll-behavior: smooth;
+}
+body { margin: 0; background: #000; color: #00ff99; font-family: 'Courier New', Courier, monospace; min-height: 100vh; overflow-x: hidden; }
+#matrixCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.2; pointer-events: none; }
+
+.container { 
+    display: flex; 
+    min-height: 100vh; 
+    padding-top: 120px; 
+    flex-wrap: wrap; /* للسماح للعناصر بالنزول عند صغر الشاشة */
+}
+
+/* المنطقة العلوية */
+.top-area { position: fixed; top: 20px; width: 100%; text-align: center; z-index: 1000; display: none; background: rgba(0,0,0,0.5); }
+.top-logo .name { font-size: 35px; font-weight: bold; letter-spacing: 5px; color: #00ff99; text-transform: uppercase; text-shadow: 0 0 10px #00ff99; }
+
+/* القائمة الجانبية */
+.sidebar { 
+    width: 350px; 
+    border-right: 1px solid rgba(0, 255, 153, 0.3); 
+    padding: 20px; 
+    background: rgba(0, 0, 0, 0.9);
+    height: calc(100vh - 120px); /* تقييد طول القائمة لتملأ ما تبقى من الشاشة */
+    overflow-y: auto;           /* تفعيل التمرير الداخلي للقائمة فقط */
+    position: sticky;           /* تثبيت القائمة */
+    top: 120px;
+}
+.sidebar h2 { font-size: 20px; margin-bottom: 20px; border-bottom: 2px solid #00ff99; display: inline-block; }
+.sidebar input { width: 100%; padding: 10px; background: #050505; color: #00ff99; border: 1px solid #00ff99; box-sizing: border-box; }
+
+.currency { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid rgba(0, 255, 153, 0.1); cursor: pointer; transition: 0.3s; }
+.currency img { width: 24px; height: 24px; margin-right: 12px; }
+.currency:hover { background: rgba(0, 255, 153, 0.15); }
+.currency.active { background: rgba(0, 255, 153, 0.25); }
+
+/* الصندوق الرئيسي */
+.main { flex: 1; display: flex; justify-content: center; align-items: flex-start; padding: 20px; }
+.box { background: rgba(5, 5, 5, 0.95); border: 1px solid #00ff99; padding: 30px; width: 100%; max-width: 450px; text-align: center; }
+#mainIcon { width: 60px; height: 60px; margin-bottom: 10px; }
+.address { width: 100%; background: #000; color: #00ff99; border: 1px solid #00ff99; padding: 12px; margin: 15px 0; box-sizing: border-box; }
+button { background: #00ff99; color: #000; border: none; padding: 12px 25px; font-weight: bold; cursor: pointer; width: 100%; }
+
+/* تجاوب الشاشات */
+@media (max-width: 768px) {
+    .container { flex-direction: column; padding-top: 80px; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #00ff99; height: auto; }
+    .main { align-items: center; }
+    .box { width: 90%; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="top-area" id="topArea">
+    <div class="top-logo"><div class="name">BayLak</div></div>
+</div>
+
+<div class="container">
+    <div class="sidebar">
+        <h2>SELECT COIN</h2>
+        <input type="text" id="search" placeholder="Search..." onkeyup="filterCoins()">
+        <div id="coinList">Loading...</div>
+    </div>
+
+    <div class="main">
+        <div class="box">
+            <img id="mainIcon" src="" alt="">
+            <h1 id="coinName" style="font-size: 20px;">---</h1>
+            <input class="address" id="wallet" readonly>
+            <button onclick="copyAddr()">COPY ADDRESS</button>
+            <div style="margin-top:20px;">
+                <img id="qr" width="150" src="">
+            </div>
+            <a id="trustLink" target="_blank" style="text-decoration: none;">
+                <button style="background: #3172bb; color: white; margin-top: 15px;">OPEN WALLET</button>
+            </a>
+            <div class="note" id="noteText" style="margin-top: 20px; font-size: 12px; color: #ff3333;">CRYPTO DONATIONS ARE NON-REFUNDABLE</div>
+        </div>
+    </div>
+</div>
+<script>
+/* MATRIX EFFECT */
+const canvas = document.getElementById('matrixCanvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+const characters = "アァカサタナハマヤャラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+const drops = Array.from({ length: columns }).map(() => 1);
+
+function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < drops.length; i++) {
+        const text = characters.charAt(Math.floor(Math.random() * characters.length));
+        ctx.fillStyle = "#fff"; ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        ctx.fillStyle = "#00ff99"; ctx.fillText(text, i * fontSize, (drops[i] - 1) * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 40);
+
+/* FETCH LOGIC */
+let coinsData = [];
+async function loadCoins() {
+    try {
+        const response = await fetch('mycrypto.txt');
+        const text = await response.text();
+        coinsData = text.split('\n').filter(line => line.trim() !== '').map(line => {
+            const [name, address, icon] = line.split(',');
+            return { name: name.trim(), address: address.trim(), icon: icon ? icon.trim() : 'default.png' };
+        });
+        buildList();
+    } catch (err) { document.getElementById("coinList").innerText = "Error loading list.txt"; }
+}
+
+function buildList() {
+    const list = document.getElementById("coinList");
+    list.innerHTML = "";
+    coinsData.forEach((c, i) => {
+        let div = document.createElement("div");
+        div.className = "currency";
+        div.innerHTML = `<img src="icons/${c.icon}" onerror="this.src='icon/default.png'"> <span>${c.name}</span>`;
+        div.onclick = () => selectCoin(i);
+        list.appendChild(div);
+    });
+    if(coinsData.length > 0) selectCoin(0);
+}
+function selectCoin(i) {
+    // 1. تحديد العناصر
+    document.querySelectorAll(".currency").forEach(el => el.classList.remove("active"));
+    const items = document.querySelectorAll(".currency");
+    if(items[i]) {
+        items[i].classList.add("active");
+        
+        // 2. التحرك السلس في القائمة الجانبية إذا كانت طويلة
+        items[i].scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+        });
+    }
+
+    const coin = coinsData[i];
+    
+    // 3. تحديث البيانات بدون إعادة تحميل
+    document.getElementById("coinName").innerText = coin.name;
+    document.getElementById("wallet").value = coin.address;
+    document.getElementById("mainIcon").src = `icons/${coin.icon}`;
+    document.getElementById("qr").src = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" + coin.address;
+    
+    // 4. تحديث رابط المحفظة (اختياري)
+    document.getElementById("trustLink").href = "trust://send?address=" + coin.address;
+    
+    // 5. التحرك السلس لمركز الصفحة (مهم للهواتف عند اختيار عملة جديدة)
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+}
+function copyAddr() {
+    navigator.clipboard.writeText(document.getElementById("wallet").value);
+    alert("Address Copied!");
+}
+
+function filterCoins() {
+    let s = document.getElementById("search").value.toLowerCase();
+    document.querySelectorAll(".currency").forEach(c => {
+        const name = c.querySelector('span').innerText.toLowerCase();
+        c.style.display = name.includes(s) ? "flex" : "none";
+    });
+}
+
+function checkHash() {
+    const isDonate = (window.location.hash === "#donate");
+    document.getElementById("topArea").style.display = isDonate ? "block" : "none";
+    document.getElementById("noteText").style.display = isDonate ? "block" : "none";
+}
+
+window.onhashchange = checkHash;
+window.onload = () => { loadCoins(); checkHash(); };
+window.onresize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+</script>
+</body>
+</html>
