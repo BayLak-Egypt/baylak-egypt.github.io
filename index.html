@@ -1,5 +1,40 @@
-<script type='text/javascript'>
-    // إعادة التوجيه إلى الرابط الخاص بك
-    window.location.href = "https://baylak-egypt.blogspot.com/";
-</script>
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>Baylak Egypt Redirect</title>
+</head>
+<body>
 
+    <div id="content">جاري التحميل...</div>
+
+    <script>
+        async function handleRequest() {
+            const searchParams = window.location.search;
+            const urlParams = new URLSearchParams(searchParams);
+            
+            // تحقق مما إذا كان هناك معامل img موجود وصحيح
+            if (!urlParams.has('img') || !urlParams.get('img')) {
+                // إذا لم يكن مطلوباً (زيارة عادية بدون معاملات)، قم بتحويله فوراً
+                window.location.href = "https://baylak-egypt.blogspot.com/";
+                return;
+            }
+
+            try {
+                // إذا كان الطلب صحيحاً، قم بجلب وعرض محتوى img.html بنفس المعطيات
+                const response = await fetch('img.html' + searchParams);
+                const html = await response.text();
+                
+                document.open();
+                document.write(html);
+                document.close();
+            } catch (error) {
+                document.getElementById('content').innerText = "حدث خطأ أثناء معالجة الطلب.";
+            }
+        }
+
+        handleRequest();
+    </script>
+
+</body>
+</html>
