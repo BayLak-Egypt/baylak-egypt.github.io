@@ -2,46 +2,70 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>GIF Emoji Made</title>
+    <title>GIF Loader</title>
+    <style>
+        body {
+            margin: 0;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
 </head>
 <body>
 
+    <div id="status">جاري التحميل...</div>
+
     <script>
-        async function loadImage() {
+        async function loadGIF() {
             const urlParams = new URLSearchParams(window.location.search);
             const key = urlParams.get('img');
+            const statusDiv = document.getElementById('status');
 
             if (!key) {
-                document.body.innerHTML = "الرجاء تحديد اسم الصورة المطلوبة.";
+                statusDiv.innerText = "الرجاء تحديد اسم الصورة.";
                 return;
             }
 
             try {
-                // قراءة ملف الـ JSON
-                const response = await fetch('img.json');
+                // جلب ملف الـ JSON مع منع التخزين المؤقت (Cache)
+                const response = await fetch('img.json?' + new Date().getTime());
+                if (!response.ok) throw new Error("فشل تحميل ملف img.json");
+                
                 const data = await response.json();
 
-                // التحقق مما إذا كان المفتاح موجوداً في الـ JSON
                 if (data[key]) {
                     const imageName = data[key];
+                    // بناء المسار المباشر بصيغة gif
                     const imagePath = `img/${imageName}.gif`;
 
-                    // إنشاء وعرض الصورة مباشرة
                     const imgElement = document.createElement('img');
                     imgElement.src = imagePath;
                     imgElement.alt = key;
                     
-                    document.body.innerHTML = '';
-                    document.body.appendChild(imgElement);
+                    imgElement.onerror = function() {
+                        statusDiv.innerText = "خطأ: الملف غير موجود في مجلد img باسم (" + imageName + ".gif)";
+                    };
+
+                    imgElement.onload = function() {
+                        document.body.innerHTML = '';
+                        document.body.appendChild(imgElement);
+                    };
                 } else {
-                    document.body.innerHTML = "الصورة غير موجودة في قاعدة البيانات.";
+                    statusDiv.innerText = "الإيموجي غير مسجل في ملف img.json";
                 }
             } catch (error) {
-                document.body.innerHTML = "حدث خطأ أثناء تحميل بيانات الصور.";
+                statusDiv.innerText = "حدث خطأ في النظام: " + error.message;
             }
         }
 
-        loadImage();
+        loadGIF();
     </script>
 
 </body>
