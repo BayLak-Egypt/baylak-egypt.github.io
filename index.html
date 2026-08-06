@@ -2,54 +2,20 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>Redmo GIF Loader</title>
+    <title>Redirecting...</title>
 </head>
-<body style="margin:0; background:transparent; display:flex; justify-content:center; align-items:center; height:100vh;">
-
-    <div id="view">جاري التحميل...</div>
-
+<body>
     <script>
-        async function loadAndConvert() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const key = urlParams.get('img');
-            const viewDiv = document.getElementById('view');
-
-            if (!key) {
-                // إذا لم يتم كتابة img، قم بالتحويل لمدونتك كما طلبت سابقاً
-                window.location.href = "https://baylak-egypt.blogspot.com/";
-                return;
-            }
-
-            try {
-                // 1. جلب ملف الـ JSON
-                const resJson = await fetch('img.json?' + new Date().getTime());
-                const data = await resJson.json();
-
-                if (data[key]) {
-                    const imageName = data[key];
-                    const imagePath = `img/${imageName}.gif`;
-
-                    // 2. جلب ملف الـ GIF الحقيقي وتحويله إلى Base64
-                    const imgRes = await fetch(imagePath);
-                    const blob = await imgRes.blob();
-                    
-                    const reader = new FileReader();
-                    reader.onloadend = function() {
-                        // 3. عرض الصورة مباشرة كبيانات ثنائية داخل الصفحة لتتخطي حظر الكامو
-                        viewDiv.innerHTML = `<img src="${reader.result}" style="max-width:100%; height:auto;" alt="${key}">`;
-                    }
-                    reader.readAsDataURL(blob);
-
-                } else {
-                    viewDiv.innerText = "الصورة غير مسجلة في النظام.";
-                }
-            } catch (err) {
-                viewDiv.innerText = "حدث خطأ في النظام.";
-            }
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // التحقق مما إذا كان الرابط يحتوي على معامل img
+        if (urlParams.has('img')) {
+            // إذا وجد img، يذهب إلى صفحة المعالجة مع الاحتفاظ بالبيانات
+            window.location.replace("img.html" + window.location.search);
+        } else {
+            // إذا لم يجد img أو تم فتح الرابط الأساسي، يوجهه إلى مدونة بلوجر
+            window.location.replace("https://baylak-egypt.blogspot.com/");
         }
-
-        loadAndConvert();
     </script>
-
 </body>
 </html>
