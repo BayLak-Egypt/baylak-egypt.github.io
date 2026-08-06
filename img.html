@@ -2,14 +2,14 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting GIF...</title>
+    <title>Redirecting to GIF...</title>
 </head>
 <body>
 
-    <div id="status" style="text-align:center; margin-top:20vh; font-family:sans-serif;">جاري تحميل الصورة...</div>
+    <div id="status" style="text-align:center; margin-top:20vh; font-family:sans-serif;">جاري تحويلك لرابط الصورة...</div>
 
     <script>
-        async function redirectToGIF() {
+        async function redirectToDirectImage() {
             const urlParams = new URLSearchParams(window.location.search);
             let key = urlParams.get('img');
             const statusDiv = document.getElementById('status');
@@ -19,7 +19,7 @@
                 return;
             }
 
-            // إزالة .gif لو كتبها المستخدم في النهاية لتطابق مفتاح الـ JSON
+            // إذا وُجدت لاحقة .gif في نهاية الباراميتر، نقوم بإزالتها لتطابق مفتاح الـ JSON
             if (key.endsWith('.gif')) {
                 key = key.replace('.gif', '');
             }
@@ -31,10 +31,12 @@
 
                 if (data[key]) {
                     const imageName = data[key];
-                    // الرابط المباشر الحقيقي لملف الـ GIF داخل مجلد img
-                    const directImageUrl = `img/${imageName}.gif`;
+                    // بناء الرابط الأساسي والمباشر للصورة داخل مجلد img
+                    // (نقوم هنا بعمل رابط مطلق لضمان نجاح التحويل مهما كان مسار الصفحة)
+                    const baseUrl = window.location.origin + window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+                    const directImageUrl = baseUrl + `img/${imageName}.gif`;
 
-                    // إعادة توجيه المتصفح مباشرة لملف الصورة الخام
+                    // التحويل الفوري والمباشر لرابط الصورة الأساسي
                     window.location.replace(directImageUrl);
                 } else {
                     statusDiv.innerText = "الصورة غير مسجلة في ملف النظام.";
@@ -44,7 +46,7 @@
             }
         }
 
-        redirectToGIF();
+        redirectToDirectImage();
     </script>
 
 </body>
