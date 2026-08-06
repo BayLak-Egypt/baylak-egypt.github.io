@@ -10,7 +10,7 @@
 
 ```markdown
 <p align="center">
-  <img src="https://baylak-egypt.blogspot.com/?img=اسم_الصورة" alt="GIF Emoji" width="50">
+  <img src="https://baylak-egypt.github.io/?img=اسم_الصورة" alt="GIF Emoji" width="50">
 </p>
 ```
 
