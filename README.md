@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="https://baylak-egypt.github.io/?img=⚽" alt="GIF Emoji" width="50">
+</p>
+
+
 # 🎭 Dynamic Animated Emojis & GIFs
 
 استخدم الإيموجي أو الرموز المتحركة (`GIF`) بسهولة داخل ملفات الـ `README.md` باستخدام روابط مختصرة.
