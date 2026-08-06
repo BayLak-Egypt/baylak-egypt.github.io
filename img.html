@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>GIF Emoji Made</title>
+</head>
+<body>
+
+    <script>
+        async function loadImage() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const key = urlParams.get('img');
+
+            if (!key) {
+                document.body.innerHTML = "الرجاء تحديد اسم الصورة المطلوبة.";
+                return;
+            }
+
+            try {
+                // قراءة ملف الـ JSON
+                const response = await fetch('img.json');
+                const data = await response.json();
+
+                // التحقق مما إذا كان المفتاح موجوداً في الـ JSON
+                if (data[key]) {
+                    const imageName = data[key];
+                    const imagePath = `img/${imageName}.gif`;
+
+                    // إنشاء وعرض الصورة مباشرة
+                    const imgElement = document.createElement('img');
+                    imgElement.src = imagePath;
+                    imgElement.alt = key;
+                    
+                    document.body.innerHTML = '';
+                    document.body.appendChild(imgElement);
+                } else {
+                    document.body.innerHTML = "الصورة غير موجودة في قاعدة البيانات.";
+                }
+            } catch (error) {
+                document.body.innerHTML = "حدث خطأ أثناء تحميل بيانات الصور.";
+            }
+        }
+
+        loadImage();
+    </script>
+
+</body>
+</html>
