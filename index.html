@@ -2,38 +2,53 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>Baylak Egypt Redirect</title>
+    <title>Redmo GIF Loader</title>
 </head>
-<body>
+<body style="margin:0; background:transparent; display:flex; justify-content:center; align-items:center; height:100vh;">
 
-    <div id="content">جاري التحميل...</div>
+    <div id="view">جاري التحميل...</div>
 
     <script>
-        async function handleRequest() {
-            const searchParams = window.location.search;
-            const urlParams = new URLSearchParams(searchParams);
-            
-            // تحقق مما إذا كان هناك معامل img موجود وصحيح
-            if (!urlParams.has('img') || !urlParams.get('img')) {
-                // إذا لم يكن مطلوباً (زيارة عادية بدون معاملات)، قم بتحويله فوراً
+        async function loadAndConvert() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const key = urlParams.get('img');
+            const viewDiv = document.getElementById('view');
+
+            if (!key) {
+                // إذا لم يتم كتابة img، قم بالتحويل لمدونتك كما طلبت سابقاً
                 window.location.href = "https://baylak-egypt.blogspot.com/";
                 return;
             }
 
             try {
-                // إذا كان الطلب صحيحاً، قم بجلب وعرض محتوى img.html بنفس المعطيات
-                const response = await fetch('img.html' + searchParams);
-                const html = await response.text();
-                
-                document.open();
-                document.write(html);
-                document.close();
-            } catch (error) {
-                document.getElementById('content').innerText = "حدث خطأ أثناء معالجة الطلب.";
+                // 1. جلب ملف الـ JSON
+                const resJson = await fetch('img.json?' + new Date().getTime());
+                const data = await resJson.json();
+
+                if (data[key]) {
+                    const imageName = data[key];
+                    const imagePath = `img/${imageName}.gif`;
+
+                    // 2. جلب ملف الـ GIF الحقيقي وتحويله إلى Base64
+                    const imgRes = await fetch(imagePath);
+                    const blob = await imgRes.blob();
+                    
+                    const reader = new FileReader();
+                    reader.onloadend = function() {
+                        // 3. عرض الصورة مباشرة كبيانات ثنائية داخل الصفحة لتتخطي حظر الكامو
+                        viewDiv.innerHTML = `<img src="${reader.result}" style="max-width:100%; height:auto;" alt="${key}">`;
+                    }
+                    reader.readAsDataURL(blob);
+
+                } else {
+                    viewDiv.innerText = "الصورة غير مسجلة في النظام.";
+                }
+            } catch (err) {
+                viewDiv.innerText = "حدث خطأ في النظام.";
             }
         }
 
-        handleRequest();
+        loadAndConvert();
     </script>
 
 </body>
