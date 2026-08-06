@@ -2,70 +2,41 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>GIF Loader</title>
-    <style>
-        body {
-            margin: 0;
-            background: transparent;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
+    <title>Redirecting to Image...</title>
 </head>
 <body>
 
-    <div id="status">جاري التحميل...</div>
-
     <script>
-        async function loadGIF() {
+        async function redirectToImage() {
             const urlParams = new URLSearchParams(window.location.search);
             const key = urlParams.get('img');
-            const statusDiv = document.getElementById('status');
 
             if (!key) {
-                statusDiv.innerText = "الرجاء تحديد اسم الصورة.";
+                document.body.innerHTML = "الرجاء تحديد اسم الصورة.";
                 return;
             }
 
             try {
-                // جلب ملف الـ JSON مع منع التخزين المؤقت (Cache)
+                // منع التخزين المؤقت لجلب أحدث تحديثات الـ JSON
                 const response = await fetch('img.json?' + new Date().getTime());
-                if (!response.ok) throw new Error("فشل تحميل ملف img.json");
-                
                 const data = await response.json();
 
                 if (data[key]) {
                     const imageName = data[key];
-                    // بناء المسار المباشر بصيغة gif
-                    const imagePath = `img/${imageName}.gif`;
+                    // الرابط المباشر لصورة الـ GIF داخل مجلد img
+                    const imageDirectUrl = `img/${imageName}.gif`;
 
-                    const imgElement = document.createElement('img');
-                    imgElement.src = imagePath;
-                    imgElement.alt = key;
-                    
-                    imgElement.onerror = function() {
-                        statusDiv.innerText = "خطأ: الملف غير موجود في مجلد img باسم (" + imageName + ".gif)";
-                    };
-
-                    imgElement.onload = function() {
-                        document.body.innerHTML = '';
-                        document.body.appendChild(imgElement);
-                    };
+                    // إعادة توجيه المتصفح مباشرة إلى ملف الصورة الحقيقي
+                    window.location.replace(imageDirectUrl);
                 } else {
-                    statusDiv.innerText = "الإيموجي غير مسجل في ملف img.json";
+                    document.body.innerHTML = "الصورة غير مسجلة في النظام.";
                 }
             } catch (error) {
-                statusDiv.innerText = "حدث خطأ في النظام: " + error.message;
+                document.body.innerHTML = "حدث خطأ في النظام.";
             }
         }
 
-        loadGIF();
+        redirectToImage();
     </script>
 
 </body>
