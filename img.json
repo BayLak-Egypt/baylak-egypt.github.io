@@ -1,7 +1,12 @@
 {
-  "⚽": "ball",
-  "⚡": "icons8-thunder.gif",
-  "logo": "redmo-logo",
-  "fire": "fire-effect",
-  "star": "golden-star"
+  "⚽": "icons8-ball",
+  "⚡": "icons8-thunder",
+  "⚙️": "icons8-setting",
+  "🎭": "icons8-edvard-munch",
+  "star": "golden-star",
+  "fire": "golden-star",
+  "🙂": "icons8-smile",
+  "🚀": "icons8-rocket",
+  "⚒️": "icons8-smile (1)",
+  "😜": "icons8-tools"
 }
