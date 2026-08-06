@@ -2,55 +2,49 @@
 <html lang="ar">
 <head>
     <meta charset="UTF-8">
-    <title>GIF Loader</title>
+    <title>Redirecting GIF...</title>
 </head>
-<body style="margin:0; background:transparent; display:flex; justify-content:center; align-items:center; height:100vh;">
+<body>
 
-    <div id="view">جاري التحميل...</div>
+    <div id="status" style="text-align:center; margin-top:20vh; font-family:sans-serif;">جاري تحميل الصورة...</div>
 
     <script>
-        async function loadGIF() {
+        async function redirectToGIF() {
             const urlParams = new URLSearchParams(window.location.search);
             let key = urlParams.get('img');
-            const viewDiv = document.getElementById('view');
+            const statusDiv = document.getElementById('status');
 
             if (!key) {
-                window.location.href = "https://baylak-egypt.blogspot.com/";
+                statusDiv.innerText = "الرجاء تحديد اسم الصورة.";
                 return;
             }
 
-            // التعامل مع فكرتك الذكية لإضافة .gif في نهاية الرابط لتجاوز حماية GitHub Camo
+            // إزالة .gif لو كتبها المستخدم في النهاية لتطابق مفتاح الـ JSON
             if (key.endsWith('.gif')) {
                 key = key.replace('.gif', '');
             }
 
             try {
-                const resJson = await fetch('img.json?' + new Date().getTime());
-                const data = await resJson.json();
+                // جلب ملف الـ JSON
+                const response = await fetch('img.json?' + new Date().getTime());
+                const data = await response.json();
 
                 if (data[key]) {
                     const imageName = data[key];
-                    const imagePath = `img/${imageName}.gif`;
+                    // الرابط المباشر الحقيقي لملف الـ GIF داخل مجلد img
+                    const directImageUrl = `img/${imageName}.gif`;
 
-                    // جلب الصورة وتحويلها لـ Base64 لضمان عملها بشكل مثالي دون حظر
-                    const imgRes = await fetch(imagePath);
-                    const blob = await imgRes.blob();
-                    
-                    const reader = new FileReader();
-                    reader.onloadend = function() {
-                        viewDiv.innerHTML = `<img src="${reader.result}" style="max-width:100%; height:auto;" alt="${key}">`;
-                    }
-                    reader.readAsDataURL(blob);
-
+                    // إعادة توجيه المتصفح مباشرة لملف الصورة الخام
+                    window.location.replace(directImageUrl);
                 } else {
-                    viewDiv.innerText = "الصورة غير مسجلة في النظام.";
+                    statusDiv.innerText = "الصورة غير مسجلة في ملف النظام.";
                 }
-            } catch (err) {
-                viewDiv.innerText = "حدث خطأ في النظام.";
+            } catch (error) {
+                statusDiv.innerText = "حدث خطأ في النظام.";
             }
         }
 
-        loadGIF();
+        redirectToGIF();
     </script>
 
 </body>
