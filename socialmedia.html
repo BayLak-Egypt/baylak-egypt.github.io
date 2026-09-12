@@ -34,7 +34,7 @@
             pointer-events: none;
         }
 
-        /* كارت المحتوى الرئيسي - متوافق مع كافة الشاشات */
+        /* كارت المحتوى الرئيسي - يتكيف مع المحتوى والشاشات دون سكولر */
         .glass-panel {
             background: rgba(0, 0, 0, 0.88);
             border: 1px solid rgba(0, 255, 204, 0.15);
@@ -43,30 +43,9 @@
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 460px;
-            max-height: 88vh;
+            max-width: 440px;
             display: flex;
             flex-direction: column;
-        }
-
-        /* حاوية الروابط مع سكولر متجاوب */
-        #links-container {
-            overflow-y: auto;
-            max-height: calc(88vh - 160px);
-            scrollbar-width: thin;
-            scrollbar-color: var(--neon) transparent;
-        }
-
-        /* تصميم شريط التمرير للمتصفحات الحديثة */
-        #links-container::-webkit-scrollbar {
-            width: 4px;
-        }
-        #links-container::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.1);
-        }
-        #links-container::-webkit-scrollbar-thumb {
-            background: var(--neon);
-            border-radius: 4px;
         }
 
         /* تأثير خط المسح */
@@ -83,7 +62,7 @@
         }
         @keyframes scan { 0% { top: -2px; } 100% { top: 100%; } }
 
-        /* ستايل الروابط */
+        /* ستايل الروابط متجاوب الحجم */
         .link-item {
             border-right: 2px solid transparent;
             transition: 0.2s ease-in-out;
@@ -101,22 +80,22 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
+<body class="flex items-center justify-center min-h-screen p-3 sm:p-6">
 
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- الكارت بـ p-8 متجاوبة بالكامل -->
-    <div class="glass-panel rounded-xl p-6 sm:p-8 relative overflow-hidden">
+    <!-- الكارت بـ p-8 كاملة وتصغير تلقائي للعناصر عند صغر الشاشة -->
+    <div class="glass-panel rounded-xl p-5 sm:p-8 relative overflow-hidden my-auto">
         <div class="scanner-line"></div>
         
-        <div class="text-center mb-6 sm:mb-8 relative z-20 shrink-0">
+        <div class="text-center mb-4 sm:mb-8 relative z-20 shrink-0">
             <h1 class="text-2xl sm:text-3xl font-black tracking-widest mb-1" style="color: var(--neon); text-shadow: 0 0 10px var(--neon);">
                 BayLak-Egypt
             </h1>
-            <div class="text-[10px] text-gray-600 uppercase tracking-[0.4em]">the super hacker</div>
+            <div class="text-[9px] sm:text-[10px] text-gray-600 uppercase tracking-[0.4em]">the super hacker</div>
         </div>
 
-        <div id="links-container" class="space-y-3 relative z-20 pr-1">
+        <div id="links-container" class="space-y-2 sm:space-y-3 relative z-20">
             <div class="text-center py-6">
                 <span class="animate-pulse text-xs text-gray-400">CONNECTING...</span>
             </div>
@@ -199,16 +178,16 @@
                     const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
 
                     const html = `
-                        <a href="${fullUrl}" target="_blank" class="link-item flex items-center p-3 group">
-                            <div class="icon-box w-10 h-10 flex items-center justify-center bg-white/5 rounded-md border border-white/10 ml-4 p-1 shrink-0">
+                        <a href="${fullUrl}" target="_blank" class="link-item flex items-center p-2 sm:p-3 group">
+                            <div class="icon-box w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-white/5 rounded-md border border-white/10 ml-3 sm:ml-4 p-1 shrink-0">
                                 <img src="${iconUrl}" 
                                      alt="icn" 
-                                     class="w-6 h-6 object-contain"
+                                     class="w-5 h-5 sm:w-6 sm:h-6 object-contain"
                                      onerror="this.src='https://cdn-icons-png.flaticon.com/512/1243/1243420.png'">
                             </div>
                             <div class="flex flex-col min-w-0 flex-1">
-                                <span class="text-xs font-bold text-gray-100 group-hover:text-[var(--neon)] transition-colors uppercase tracking-wider truncate">${label}</span>
-                                <span class="text-[8px] text-gray-700 lowercase mt-0.5 truncate">${domain}</span>
+                                <span class="text-[11px] sm:text-xs font-bold text-gray-100 group-hover:text-[var(--neon)] transition-colors uppercase tracking-wider truncate">${label}</span>
+                                <span class="text-[7px] sm:text-[8px] text-gray-700 lowercase mt-0.5 truncate">${domain}</span>
                             </div>
                             <div class="mr-auto opacity-0 group-hover:opacity-100 transition-opacity pr-2">
                                 <span class="text-[var(--neon)] text-xs font-bold">[#]</span>
@@ -222,7 +201,6 @@
                 container.innerHTML = `<p class="text-red-500 text-xs text-center">FILE NOT FOUND: mysocial.txt</p>`;
             }
         }
-        loadLight = loadLinks();
         loadLinks();
     </script>
 </body>
