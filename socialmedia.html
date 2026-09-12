@@ -2,16 +2,12 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BayLak Egypt</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --neon: #00ffcc; --matrix-green: #0F0; }
         
-        * {
-            box-sizing: border-box;
-        }
-
         body, html { 
             margin: 0; 
             padding: 0; 
@@ -19,7 +15,6 @@
             min-height: 100vh;
             background: #000; 
             font-family: 'Courier New', monospace; 
-            overflow-x: hidden;
         }
         
         /* قماش خلفية الماتريكس */
@@ -34,7 +29,7 @@
             pointer-events: none;
         }
 
-        /* كارت المحتوى الرئيسي - يتكيف مع المحتوى والشاشات دون سكولر */
+        /* كارت المحتوى الرئيسي - حجم كامل وثابت بدون أي سكولر */
         .glass-panel {
             background: rgba(0, 0, 0, 0.88);
             border: 1px solid rgba(0, 255, 204, 0.15);
@@ -42,10 +37,8 @@
             backdrop-filter: blur(8px);
             position: relative;
             z-index: 10;
-            width: 100%;
-            max-width: 440px;
-            display: flex;
-            flex-direction: column;
+            width: 90%;
+            max-width: 450px;
         }
 
         /* تأثير خط المسح */
@@ -62,7 +55,7 @@
         }
         @keyframes scan { 0% { top: -2px; } 100% { top: 100%; } }
 
-        /* ستايل الروابط متجاوب الحجم */
+        /* ستايل الروابط */
         .link-item {
             border-right: 2px solid transparent;
             transition: 0.2s ease-in-out;
@@ -80,22 +73,22 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-3 sm:p-6">
+<body class="flex items-center justify-center min-h-screen p-4">
 
     <canvas id="matrixCanvas"></canvas>
 
-    <!-- الكارت بـ p-8 كاملة وتصغير تلقائي للعناصر عند صغر الشاشة -->
-    <div class="glass-panel rounded-xl p-5 sm:p-8 relative overflow-hidden my-auto">
+    <!-- الكارت بحجم p-8 كامل وبدون أي شريط تمرير -->
+    <div class="glass-panel rounded-xl p-8 relative overflow-hidden my-auto">
         <div class="scanner-line"></div>
         
-        <div class="text-center mb-4 sm:mb-8 relative z-20 shrink-0">
-            <h1 class="text-2xl sm:text-3xl font-black tracking-widest mb-1" style="color: var(--neon); text-shadow: 0 0 10px var(--neon);">
+        <div class="text-center mb-8 relative z-20">
+            <h1 class="text-3xl font-black tracking-widest mb-1" style="color: var(--neon); text-shadow: 0 0 10px var(--neon);">
                 BayLak-Egypt
             </h1>
-            <div class="text-[9px] sm:text-[10px] text-gray-600 uppercase tracking-[0.4em]">the super hacker</div>
+            <div class="text-[10px] text-gray-600 uppercase tracking-[0.4em]">the super hacker</div>
         </div>
 
-        <div id="links-container" class="space-y-2 sm:space-y-3 relative z-20">
+        <div id="links-container" class="space-y-4 relative z-20">
             <div class="text-center py-6">
                 <span class="animate-pulse text-xs text-gray-400">CONNECTING...</span>
             </div>
@@ -107,11 +100,8 @@
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
 
-        function resizeCanvas() {
-            canvas.height = window.innerHeight;
-            canvas.width = window.innerWidth;
-        }
-        resizeCanvas();
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
 
         const katakana = "アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン";
         const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -122,14 +112,9 @@
         let columns = canvas.width / fontSize;
         let drops = [];
         
-        function initDrops() {
-            columns = canvas.width / fontSize;
-            drops = [];
-            for (let x = 0; x < columns; x++) {
-                drops[x] = 1;
-            }
+        for (let x = 0; x < columns; x++) {
+            drops[x] = 1;
         }
-        initDrops();
 
         function drawMatrix() {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
@@ -152,8 +137,8 @@
         setInterval(drawMatrix, 30);
 
         window.addEventListener('resize', () => {
-            resizeCanvas();
-            initDrops();
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
         });
 
         // --- جلب الروابط ---
@@ -178,16 +163,16 @@
                     const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
 
                     const html = `
-                        <a href="${fullUrl}" target="_blank" class="link-item flex items-center p-2 sm:p-3 group">
-                            <div class="icon-box w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center bg-white/5 rounded-md border border-white/10 ml-3 sm:ml-4 p-1 shrink-0">
+                        <a href="${fullUrl}" target="_blank" class="link-item flex items-center p-3 group">
+                            <div class="icon-box w-10 h-10 flex items-center justify-center bg-white/5 rounded-md border border-white/10 ml-4 p-1 shrink-0">
                                 <img src="${iconUrl}" 
                                      alt="icn" 
-                                     class="w-5 h-5 sm:w-6 sm:h-6 object-contain"
+                                     class="w-6 h-6 object-contain"
                                      onerror="this.src='https://cdn-icons-png.flaticon.com/512/1243/1243420.png'">
                             </div>
                             <div class="flex flex-col min-w-0 flex-1">
-                                <span class="text-[11px] sm:text-xs font-bold text-gray-100 group-hover:text-[var(--neon)] transition-colors uppercase tracking-wider truncate">${label}</span>
-                                <span class="text-[7px] sm:text-[8px] text-gray-700 lowercase mt-0.5 truncate">${domain}</span>
+                                <span class="text-xs font-bold text-gray-100 group-hover:text-[var(--neon)] transition-colors uppercase tracking-wider truncate">${label}</span>
+                                <span class="text-[8px] text-gray-700 lowercase mt-0.5 truncate">${domain}</span>
                             </div>
                             <div class="mr-auto opacity-0 group-hover:opacity-100 transition-opacity pr-2">
                                 <span class="text-[var(--neon)] text-xs font-bold">[#]</span>
