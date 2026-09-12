@@ -2,17 +2,24 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BayLak Egypt</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root { --neon: #00ffcc; --matrix-green: #0F0; }
+        
+        * {
+            box-sizing: border-box;
+        }
+
         body, html { 
             margin: 0; 
             padding: 0; 
-            height: 100%; 
+            width: 100%;
+            min-height: 100vh;
             background: #000; 
             font-family: 'Courier New', monospace; 
+            overflow-x: hidden;
         }
         
         /* قماش خلفية الماتريكس */
@@ -20,33 +27,46 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             z-index: 1;
             opacity: 0.25;
+            pointer-events: none;
         }
 
-        /* كارت المحتوى الرئيسي - زجاجي (Glassmorphism) مع التجاوب التام */
+        /* كارت المحتوى الرئيسي - متوافق مع كافة الشاشات */
         .glass-panel {
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.88);
             border: 1px solid rgba(0, 255, 204, 0.15);
             box-shadow: 0 0 30px rgba(0, 255, 204, 0.05);
             backdrop-filter: blur(8px);
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 440px;
-            max-height: 90vh; /* عدم تجاوز ارتفاع الشاشة */
+            max-width: 460px;
+            max-height: 88vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* جعل حاوية الروابط قابلة للتمرير إذا كثرت */
+        /* حاوية الروابط مع سكولر متجاوب */
         #links-container {
             overflow-y: auto;
-            max-height: 60vh;
+            max-height: calc(88vh - 160px);
             scrollbar-width: thin;
             scrollbar-color: var(--neon) transparent;
+        }
+
+        /* تصميم شريط التمرير للمتصفحات الحديثة */
+        #links-container::-webkit-scrollbar {
+            width: 4px;
+        }
+        #links-container::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+        #links-container::-webkit-scrollbar-thumb {
+            background: var(--neon);
+            border-radius: 4px;
         }
 
         /* تأثير خط المسح */
@@ -81,10 +101,11 @@
         }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-3 sm:p-6">
+<body class="flex items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
 
     <canvas id="matrixCanvas"></canvas>
 
+    <!-- الكارت بـ p-8 متجاوبة بالكامل -->
     <div class="glass-panel rounded-xl p-6 sm:p-8 relative overflow-hidden">
         <div class="scanner-line"></div>
         
@@ -103,12 +124,15 @@
     </div>
 
     <script>
-        // --- أولاً: كود خلفية الماتريكس ---
+        // --- خلفية الماتريكس ---
         const canvas = document.getElementById('matrixCanvas');
         const ctx = canvas.getContext('2d');
 
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
+        function resizeCanvas() {
+            canvas.height = window.innerHeight;
+            canvas.width = window.innerWidth;
+        }
+        resizeCanvas();
 
         const katakana = "アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブヅプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン";
         const latin = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -120,8 +144,8 @@
         let drops = [];
         
         function initDrops() {
-            drops = [];
             columns = canvas.width / fontSize;
+            drops = [];
             for (let x = 0; x < columns; x++) {
                 drops[x] = 1;
             }
@@ -149,12 +173,11 @@
         setInterval(drawMatrix, 30);
 
         window.addEventListener('resize', () => {
-            canvas.height = window.innerHeight;
-            canvas.width = window.innerWidth;
+            resizeCanvas();
             initDrops();
         });
 
-        // --- ثانياً: كود جلب الروابط ---
+        // --- جلب الروابط ---
         async function loadLinks() {
             try {
                 const response = await fetch('mysocial.txt');
@@ -176,11 +199,11 @@
                     const iconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
 
                     const html = `
-                        <a href="${fullUrl}" target="_blank" class="link-item flex items-center p-2.5 sm:p-3 group">
-                            <div class="icon-box w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-white/5 rounded-md border border-white/10 ml-3 sm:ml-4 p-1 shrink-0">
+                        <a href="${fullUrl}" target="_blank" class="link-item flex items-center p-3 group">
+                            <div class="icon-box w-10 h-10 flex items-center justify-center bg-white/5 rounded-md border border-white/10 ml-4 p-1 shrink-0">
                                 <img src="${iconUrl}" 
                                      alt="icn" 
-                                     class="w-5 h-5 sm:w-6 sm:h-6 object-contain"
+                                     class="w-6 h-6 object-contain"
                                      onerror="this.src='https://cdn-icons-png.flaticon.com/512/1243/1243420.png'">
                             </div>
                             <div class="flex flex-col min-w-0 flex-1">
@@ -199,6 +222,7 @@
                 container.innerHTML = `<p class="text-red-500 text-xs text-center">FILE NOT FOUND: mysocial.txt</p>`;
             }
         }
+        loadLight = loadLinks();
         loadLinks();
     </script>
 </body>
